@@ -3,10 +3,10 @@
 #include "mainwindow.h"
 #include "tile.h"
 #include "loadgame.h"
+#include <QFile>
 
-
-int count=0;//Moves
-int turn=1;//Queue
+int count=0;
+int turn=1;
 int exp[60],max=0;
 extern int retVal;
 
@@ -23,10 +23,10 @@ public:
          QLabel *outLabel = new QLabel(baseWidget);
 
         if(!Pos)
-            outLabel->setGeometry(xPos,yPos,552,20);        //Horizontal border
+            outLabel->setGeometry(xPos,yPos,552,20);
 
         else
-            outLabel->setGeometry(xPos,yPos,20,512);        //Vertical border
+            outLabel->setGeometry(xPos,yPos,20,512);
 
         outLabel->setStyleSheet("QLabel { background-color :rgb(170, 170, 127); color : black; }");
     }
@@ -52,13 +52,12 @@ void accessories(QWidget *baseWidget)
 }
 
 
-//Creating chessboard
-void chessBoard(QWidget *baseWidget, Tile *tile[8][8])
+void visualizeBoard(QWidget *baseWidget, Tile *tile[8][8])
 {
     int i,j,k=0,hor,ver;
     Border *border[4]={ NULL };
 
-    //Borders
+
     {
     border[0]->outline(baseWidget,330,105,0);
     border[1]->outline(baseWidget,330,637,0);
@@ -66,7 +65,6 @@ void chessBoard(QWidget *baseWidget, Tile *tile[8][8])
     border[2]->outline(baseWidget,862,125,1);
     }
 
-    //Creating 64 tiles(memory allocation in the objects of class tile)
     ver=125;
     for(i=0;i<8;i++)
     {
@@ -85,8 +83,11 @@ void chessBoard(QWidget *baseWidget, Tile *tile[8][8])
         }
         ver+=64;
     }
+}
 
-    //Black pawns
+void visualizeStartGameStage(Tile *tile[8][8])
+{
+    int i,j,k=0,hor,ver;
     for(j=0;j<8;j++)
     {
         tile[1][j]->piece=1;
@@ -94,7 +95,6 @@ void chessBoard(QWidget *baseWidget, Tile *tile[8][8])
         tile[1][j]->display('P');
     }
 
-    //White pawns
     for(j=0;j<8;j++)
     {
         tile[6][j]->piece=1;
@@ -102,12 +102,10 @@ void chessBoard(QWidget *baseWidget, Tile *tile[8][8])
         tile[6][j]->display('P');
     }
 
-    //White and black other figures
     for(j=0;j<8;j++)
-    {   //Black figures
+    {
         tile[0][j]->piece=1;
         tile[0][j]->pieceColor=0;
-        //White figures
         tile[7][j]->piece=1;
         tile[7][j]->pieceColor=1;
     }
@@ -134,6 +132,59 @@ void chessBoard(QWidget *baseWidget, Tile *tile[8][8])
     tile[7][6]->display('H');
     tile[7][7]->display('R');
     }
+}
+
+struct TileConfig
+{
+    TileConfig(char aname, int arow, int acol, int acolor) : name(aname), row(arow), col(acol), color(acolor) {}
+    char name;
+    int row;
+    int col;
+    int color;
+};
+
+std::vector<TileConfig> loadedTiles;
+
+void visualizeLoadedGameStage(Tile *tile[8][8])
+{
+    QFile file("log.txt");
+    file.open(QIODevice::ReadOnly | QIODevice::Text);
+
+    QTextStream stream(&file);
+    QString line;
+    do {
+        line = stream.readLine();
+        QStringList tokens = line.split(':', QString::SkipEmptyParts);
+        if (!tokens.empty())
+            loadedTiles.push_back(TileConfig(*tokens.at(0).toLatin1().data(), tokens.at(1).toInt(), tokens.at(2).toInt(), tokens.at(3).toInt()));
+        //qDebug() << tokens.at(0) << tokens.at(1).toInt() << tokens.at(2).toInt();
+    } while (!line.isNull());
+
+    file.close();
+    std::vector<TileConfig>::iterator itr = loadedTiles.begin();
+    for (; itr != loadedTiles.end(); ++itr)
+    {
+        char name = itr->name;
+        int row = itr->row;
+        int col = itr->col;
+        int color = itr->color;
+
+        tile[row][col]->piece=1;
+        tile[row][col]->pieceColor=color;
+        tile[row][col]->display(name);
+    }
+}
+
+void chessBoard(QWidget *baseWidget, Tile *tile[8][8])
+{
+    visualizeBoard(baseWidget, tile);
+    visualizeStartGameStage(tile);
+}
+
+void loadChessBoard(QWidget *baseWidget, Tile *tile[8][8])
+{
+    visualizeBoard(baseWidget, tile);
+    visualizeLoadedGameStage(tile);
 }
 
 firstwindow::firstwindow(QWidget *parent) : QDialog(parent)
@@ -175,13 +226,13 @@ connect(load,SIGNAL(clicked(bool)),this,SLOT(loadGameClicked()));
  }
  void firstwindow::loadGameClicked()
  {
-     loadGame *myWindow=new  loadGame;
-     myWindow->setGeometry(0,0,1366,768);
+     MainWindow *myWindow=new  MainWindow();
+      myWindow->setGeometry(0,0,1366,768);
 
-     accessories(myWindow);
-     chessBoard(myWindow,tile);
-     this->close();
+      accessories(myWindow);
+      loadChessBoard(myWindow,tile);
+      this->close();
 
-     myWindow->show();
+      myWindow->show();
 
  }

@@ -1,12 +1,11 @@
 #include "tile.h"
 #include "validation.h"
-//#include <QFile>
 #include <QVector>
 
 
 QVector<QString> str;
 validation *valid = new validation();
-extern int count,turn;//The moves and turn defined in main
+extern int count,turn;
 extern QWidget *myWidget;
 extern Tile *click1;
 extern Tile *tile[8][8];
@@ -18,12 +17,7 @@ void Tile::log()
 {
 
          str.push_back(QString::number(this->tileNum+1));
-      //  if(this->pieceColor)
-     // str.push_back("White");
-      // else
-      // str.push_back("Black");
     str.push_back(QString('\n'));
-      //  str.push_back(QString(this->pieceName)+'\n');
 
 }
 
@@ -32,11 +26,9 @@ void Tile::mousePressEvent(QMouseEvent *event)
     validate(this,++count);
 
 }
-//Shows figure
 void Tile::display(char elem)
 {
     this->pieceName=elem;
-    //If white figure
     if(this->pieceColor && this->piece)
     {
         switch(elem)
@@ -55,7 +47,6 @@ void Tile::display(char elem)
                       break;
         }
     }
-    //If black figure
     else if(this->piece)
     {
         switch(elem)
@@ -107,13 +98,14 @@ void validate(Tile *temp, int c)
 
             count=0;
         }
+
+            qDebug()<<"c = 1";
     }
 
     else
     { 
         if(temp->tileNum==click1->tileNum)
         {
-
             click1->tileDisplay();
             disOrange();
             max=0;
@@ -150,10 +142,11 @@ void validate(Tile *temp, int c)
 
                 count=1;
             }
+
+            qDebug()<<"c != 1 zzzzzzzz";
         }
     }
 }
-//Updating chessboard
 void Tile::tileDisplay()
 {
 
@@ -162,7 +155,6 @@ void Tile::tileDisplay()
     else
         this->setStyleSheet("QLabel {background-color: rgb(211, 211, 158);}:hover{background-color: rgb(170,95,127);}");
 }
-//Clear the possible moves
 void disOrange()
 {
     int i;

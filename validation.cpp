@@ -35,7 +35,7 @@ int validation::chooser(Tile *temp)
     return flag;
 }
 
-//Pawn
+
 int validation::validatePawn(Tile *temp)
 {
     int row,col;
@@ -44,7 +44,6 @@ int validation::validatePawn(Tile *temp)
     col=temp->col;
     retVal=0;
 
-    //White pawn
     if(temp->pieceColor)
     {
         if(row-1>=0 && !tile[row-1][col]->piece)
@@ -79,7 +78,6 @@ int validation::validatePawn(Tile *temp)
             }
         }
     }
-    //Black pawn
     else
     {
         if(row+1<=7 && !tile[row+1][col]->piece)
@@ -116,7 +114,6 @@ int validation::validatePawn(Tile *temp)
     return retVal;
 }
 
-//Rook
 int validation::validateRook(Tile *temp)
 {
     int r,c;
@@ -211,7 +208,6 @@ int validation::validateRook(Tile *temp)
     return retVal;
 }
 
-//Horse
 int validation::validateHorse(Tile *temp)
 {
     int r,c;
@@ -295,7 +291,6 @@ int validation::validateHorse(Tile *temp)
     return retVal;
 }
 
-//King
 int validation::validateKing(Tile *temp)
 {
     int r,c;
@@ -379,7 +374,6 @@ int validation::validateKing(Tile *temp)
     return retVal;
 }
 
-//Queen
 int validation::validateQueen(Tile *temp)
 {
     int r,c;
@@ -558,7 +552,6 @@ int validation::validateQueen(Tile *temp)
     return retVal;
 }
 
-//Bishop
 int validation::validateBishop(Tile *temp)
 {
     int r,c;
@@ -651,7 +644,6 @@ int validation::validateBishop(Tile *temp)
     return retVal;
 }
 
-//Show possible moves
 void validation::orange()
 {
     int i;

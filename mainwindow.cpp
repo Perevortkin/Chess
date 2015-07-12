@@ -4,6 +4,8 @@
 #include <QFile>
 #include <QVector>
 #include <QTextStream>
+#include <tile.h>
+
 extern QVector<QString> str;
 MainWindow::MainWindow(QWidget *parent) :
     QDialog(parent)
@@ -46,13 +48,18 @@ void MainWindow::on_savedButton_clicked()
      file.open(QIODevice::WriteOnly | QIODevice::Text);
 
      QTextStream out(&file);
-         QVector<QString>::Iterator iter;
-         int i=0;
-     for(iter=str.begin();iter!=str.end();iter++)
+     for (QObjectList::const_iterator child = this->children().begin(); child != this->children().end(); ++child)
      {
-         out<<str[i];
-         i++;
+         Tile* tile = dynamic_cast<Tile*>(*child);
+         if (tile)
+         {
+             if (tile->piece == 1)
+             {
+                 out << tile->pieceName << ":" << tile->row << ":" << tile->col << ":" << tile->pieceColor << "\n";
+             }
+         }
      }
+
      file.close();
 
 }

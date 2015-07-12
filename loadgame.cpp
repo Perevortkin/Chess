@@ -4,9 +4,7 @@ loadGame::loadGame(QWidget *parent) : QDialog(parent)
 {
     QVBoxLayout *mainLay= new QVBoxLayout;
     QVBoxLayout *lay= new QVBoxLayout;
-    //lay->setMargin(100);
     QVBoxLayout *lay2= new QVBoxLayout;
-    //lay->setMargin(100);
     mainLay->addLayout(lay);
     mainLay->addLayout(lay2);
 
